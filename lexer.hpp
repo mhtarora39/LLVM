@@ -90,12 +90,12 @@ struct Tokenizer
         return stringToTokenMap[token];
       }
     }
-    std::cout << "token == " << token << std::endl;
     // check if last char was new EOF or NOT.
     if (tok_chr == EOF)
     {
       return Token::eEOF;
     }
+    identifier = token;
     return Token::eUNKNOWN;
 
     // can one line have multiple Tokens ?

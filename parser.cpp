@@ -1,7 +1,18 @@
 #include "expr.hpp"
 #include "expr_handelers.hpp"
 
-void main_loop()
+class ASTContainer
+{
+
+    ASTContainer(std::unordered_map<Token, ExprHandler> expr_handlers = EXPR_HANDLERS){
+
+    };
+
+    using AstExpr = std::vector<std::vector<std::unique_ptr<ExprAST>>>;
+};
+
+void
+main_loop()
 {
 
     auto tokenizer = Tokenizer();
@@ -17,6 +28,7 @@ void main_loop()
     }
 }
 
-int main() {
+int main()
+{
     main_loop();
 }
