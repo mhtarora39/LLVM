@@ -26,7 +26,16 @@ std::unordered_map<std::string, Token> stringToTokenMap = {
     {"def", Token::eDEF},
     {"extern", Token::eEXTERN},
     {"identifier", Token::eIDENTIFIER},
-    {"number", Token::eNUMBER}};
+    {"number", Token::eNUMBER},
+    {"unknown", Token::eUNKNOWN}};
+
+std::unordered_map<Token, std::string> tokenToStringMap = {
+    {Token::eEOF, "eof"},
+    {Token::eDEF, "def"},
+    {Token::eEXTERN, "extern"},
+    {Token::eIDENTIFIER, "identifier"},
+    {Token::eNUMBER, "number"},
+    {Token::eUNKNOWN, "unknown"}};
 
 struct Tokenizer
 {
@@ -71,15 +80,17 @@ struct Tokenizer
     }
     // else Check if word is any identifier return its value.
     token = "";
-    while ((tok_chr = getchar()) != SPACE && isalpha(tok_chr))
+    while (isalpha(tok_chr))
     {
       token += tok_chr;
+      tok_chr = getchar();
       if (stringToTokenMap.find(token) != stringToTokenMap.end())
       {
         identifier = token;
         return stringToTokenMap[token];
       }
     }
+    std::cout << "token == " << token << std::endl;
     // check if last char was new EOF or NOT.
     if (tok_chr == EOF)
     {
@@ -92,4 +103,3 @@ struct Tokenizer
   std::string identifier;
   double num_val;
 };
-
