@@ -1,3 +1,5 @@
+#pragma once
+
 #include <string>
 #include <stdio.h>
 #include <unordered_map>
@@ -26,7 +28,7 @@ std::unordered_map<std::string, Token> stringToTokenMap = {
     {"identifier", Token::eIDENTIFIER},
     {"number", Token::eNUMBER}};
 
-struct Tokeinizer
+struct Tokenizer
 {
   /*
   Reds the next tokens from the standard inputs.
@@ -53,7 +55,6 @@ struct Tokeinizer
       }
       return getNextToken();
     }
-    // check if last char was new EOF or NOT.
 
     // check if it digit or string
     while (isdigit(tok_chr) || tok_chr == '.')
@@ -62,13 +63,12 @@ struct Tokeinizer
       token += tok_chr;
       tok_chr = getchar();
     }
-
+    // if digit return eNumber
     if (token != "")
     {
       num_val = std::stod(token);
       return Token::eNUMBER;
     }
-    // if digit return eNumber
     // else Check if word is any identifier return its value.
     token = "";
     while ((tok_chr = getchar()) != SPACE && isalpha(tok_chr))
@@ -80,14 +80,16 @@ struct Tokeinizer
         return stringToTokenMap[token];
       }
     }
-
-    if(tok_chr == EOF) {
+    // check if last char was new EOF or NOT.
+    if (tok_chr == EOF)
+    {
       return Token::eEOF;
     }
     return Token::eUNKNOWN;
-  
+
     // can one line have multiple Tokens ?
   }
   std::string identifier;
   double num_val;
 };
+
