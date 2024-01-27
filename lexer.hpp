@@ -81,10 +81,12 @@ struct Tokenizer
     }
     // else Check if word is any identifier return its value.
     token = "";
+    auto ret = Token::eUNKNOWN;
     while (isalpha(tok_chr))
     {
       token += tok_chr;
       tok_chr = getchar();
+      ret = Token::eIDENTIFIER;
       if (stringToTokenMap.find(token) != stringToTokenMap.end())
       {
         identifier = token;
@@ -97,7 +99,7 @@ struct Tokenizer
       return Token::eEOF;
     }
     identifier = token;
-    return Token::eUNKNOWN;
+    return ret;
 
     // can one line have multiple Tokens ?
   }

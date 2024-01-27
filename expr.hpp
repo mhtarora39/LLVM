@@ -183,10 +183,23 @@ public:
   std::unique_ptr<FunctionAST> ParseDefinition();
   std::unique_ptr<FunctionAST> ParseTopLevelExpr();
   std::unique_ptr<PrototypeAST> ParseExtern();
+<<<<<<< HEAD
+=======
+  std::unique_ptr<NumberExprAST> ParseNumber();
+>>>>>>> 0538bad (WIP Parser)
   void MainLoop();
   int getNextToken();
 };
 
+<<<<<<< HEAD
+=======
+std::unique_ptr<NumberExprAST> Parser::ParseNumber()
+{
+  // Placeholder for prototype parsing logic
+  return std::make_unique<NumberExprAST>(tokenizer.num_val);
+}
+
+>>>>>>> 0538bad (WIP Parser)
 std::unique_ptr<ExprAST> Parser::ParseExpression()
 {
   // Placeholder for expression parsing logic
@@ -202,7 +215,14 @@ std::unique_ptr<PrototypeAST> Parser::ParsePrototype()
 std::unique_ptr<FunctionAST> Parser::ParseDefinition()
 {
   // Placeholder for function definition parsing logic
-  return nullptr;
+  tokenizer.getNextToken();
+  auto proto = ParsePrototype();
+  if(!proto) {
+    return nullptr;
+  }
+  tokenizer.getNextToken();
+  auto expr = ParseExpression();
+  return std::make_unique<FunctionAST>(std::move(proto))
 }
 
 std::unique_ptr<FunctionAST> Parser::ParseTopLevelExpr()
@@ -219,9 +239,15 @@ std::unique_ptr<PrototypeAST> Parser::ParseExtern()
 
 void Parser::MainLoop()
 {
+<<<<<<< HEAD
   auto token = m_tokenizer.getNextToken();
   while (true)
   {
+=======
+  while (true)
+  {
+    auto token = m_tokenizer.getNextToken();
+>>>>>>> 0538bad (WIP Parser)
     switch (token)
     {
       case Token::eEOF:
