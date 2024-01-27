@@ -46,6 +46,7 @@ struct Tokenizer
   {
     // Read the input from stdin
     std::string token = "";
+    identifier = "";
     char tok_chr = SPACE;
     while (tok_chr == SPACE)
     {

@@ -9,6 +9,7 @@
 #include <vector>
 #include <memory>
 
+Tokenizer tokenizer;
 class Visitor;
 
 class ExprAST
@@ -19,9 +20,7 @@ public:
   {
     return "GenericExpr";
   }
-  virtual void accept(Visitor *visitor)
-  {
-  }
+  virtual void accept(Visitor *visitor) = 0;
 };
 
 class NumberExprAST : public ExprAST
@@ -35,6 +34,7 @@ public:
   }
   virtual void accept(Visitor *visitor)
   {
+    visitor->visit(*this);
   }
 
   NumberExprAST(double Val) : Val(Val) {}
@@ -51,6 +51,7 @@ public:
   }
   virtual void accept(Visitor *visitor)
   {
+    visitor->visit(*this);
   }
 
   VariableExprAST(const std::string &Name) : Name(Name) {}
@@ -68,6 +69,7 @@ public:
   }
   virtual void accept(Visitor *visitor)
   {
+    visitor->visit(*this);
   }
 
   BinaryExprAST(char Op, std::unique_ptr<ExprAST> LHS,
@@ -87,6 +89,7 @@ public:
   }
   virtual void accept(Visitor *visitor)
   {
+    visitor->visit(*this);
   }
 
   CallExprAST(const std::string &Callee,
@@ -110,9 +113,25 @@ public:
   const std::string &getName() const { return Name; }
 };
 
+/// FunctionAST - This class represents a function definition itself.
+class FunctionAST
+{
+  std::unique_ptr<PrototypeAST> Proto;
+  std::unique_ptr<ExprAST> Body;
+
+public:
+  virtual void accept(Visitor *visitor)
+  {
+    visitor->visit(*this);
+  }
+  FunctionAST(std::unique_ptr<PrototypeAST> Proto,
+              std::unique_ptr<ExprAST> Body)
+      : Proto(std::move(Proto)), Body(std::move(Body)) {}
+};
+
 class Visitor
 {
-
+public:
   virtual void visit(NumberExprAST &node) = 0;
   virtual void visit(VariableExprAST &node) = 0;
   virtual void visit(BinaryExprAST &node) = 0;
@@ -121,10 +140,10 @@ class Visitor
 
 class ExprVisitor : public Visitor
 {
+public:
   virtual void visit(NumberExprAST &node)
   {
   }
-
   virtual void visit(VariableExprAST &node)
   {
   }
@@ -134,20 +153,103 @@ class ExprVisitor : public Visitor
   virtual void visit(CallExprAST &node)
   {
   }
-}
-
-class FunctionAST
-{
-  std::unique_ptr<PrototypeAST> Proto;
-  std::unique_ptr<ExprAST> Body;
-
-public:
-  std::string getType() override
+  virtual void visit(FunctionAST &node)
   {
-    return "FunctionAST";
   }
 
-  FunctionAST(std::unique_ptr<PrototypeAST> Proto,
-              std::unique_ptr<ExprAST> Body)
-      : Proto(std::move(Proto)), Body(std::move(Body)) {}
+private:
+  std::vector<std::unique_ptr<ExprAST>> ast_container;
 };
+
+// Parser class
+class Parser
+{
+  std::unordered_map<char, int> BinopPrecedence;
+  Tokenizer m_tokenizer;
+
+public:
+  Parser(Tokenizer &tokenizer) : m_tokenizer(tokenizer)
+  {
+    // Install standard binary operators.
+    // 1 is lowest precedence.
+    BinopPrecedence['<'] = 10;
+    BinopPrecedence['+'] = 20;
+    BinopPrecedence['-'] = 20;
+    BinopPrecedence['*'] = 40; // highest.
+  }
+
+  std::unique_ptr<ExprAST> ParseExpression();
+  std::unique_ptr<PrototypeAST> ParsePrototype();
+  std::unique_ptr<FunctionAST> ParseDefinition();
+  std::unique_ptr<FunctionAST> ParseTopLevelExpr();
+  std::unique_ptr<PrototypeAST> ParseExtern();
+  void MainLoop();
+  int getNextToken();
+};
+
+std::unique_ptr<ExprAST> Parser::ParseExpression()
+{
+  // Placeholder for expression parsing logic
+  return nullptr;
+}
+
+std::unique_ptr<PrototypeAST> Parser::ParsePrototype()
+{
+  // Placeholder for prototype parsing logic
+  return nullptr;
+}
+
+std::unique_ptr<FunctionAST> Parser::ParseDefinition()
+{
+  // Placeholder for function definition parsing logic
+  return nullptr;
+}
+
+std::unique_ptr<FunctionAST> Parser::ParseTopLevelExpr()
+{
+  // Placeholder for top-level expression parsing logic
+  return nullptr;
+}
+
+std::unique_ptr<PrototypeAST> Parser::ParseExtern()
+{
+  // Placeholder for external prototype parsing logic
+  return nullptr;
+}
+
+void Parser::MainLoop()
+{
+  auto token = m_tokenizer.getNextToken();
+  while (true)
+  {
+    switch (token)
+    {
+      case Token::eEOF:
+        return;
+      case Token::eUNKNOWN:
+      {
+        ParseExpression();
+        break;
+      }
+      case Token::eDEF:
+      {
+        ParseDefinition();
+        break;
+      }
+      case Token::eEXTERN:
+      {
+        ParseExtern();
+        break;
+      }
+      default:
+      {
+        ParseTopLevelExpr();
+      }
+    }
+  }
+}
+
+int main()
+{
+  ExprVisitor *visitor;
+}
