@@ -100,7 +100,6 @@ struct Tokenizer
     }
     identifier = token;
     return ret;
-
     // can one line have multiple Tokens ?
   }
   std::string identifier;
